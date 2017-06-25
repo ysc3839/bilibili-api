@@ -3,46 +3,39 @@
 # pylint: disable=I0011,C0103,C0111
 
 from __future__ import print_function
-from urllib import urlencode
-from hashlib import md5
 from time import sleep
 import requests
 
-ACCESS_KEY = '' # Your access key.
+from utils import ACCESS_KEY, APP_KEY, headers, getSign
 
-# Get from bilibili android client
-APP_KEY = '1d8b6e7d45233436'
-APP_SECRET = '560c52ccd288fed045859ed18bffd973'
+_logger = None
 
-# Another one
-#APP_KEY = '4409e2ce8ffd12b8'
-#APP_SECRET = '59b43e04ad6965f34319062b478f83dd'
+def setLogger(logger):
+    global _logger
+    _logger = logger
 
-# Get from https://github.com/WhiteBlue/bilibili-sdk-go/blob/master/test/api_test.go
-#APP_KEY = '4ebafd7c4951b366'
-#APP_SECRET = '8cb98205e9b2ad3669aad0fce12a4c13'
-
-headers = {'user-agent': 'Mozilla/5.0 BiliDroid/4.34.0 (bbcallen@gmail.com)'}
-
-def get_sign(params):
-    items = params.items()
-    items.sort()
-    return md5(urlencode(items) + APP_SECRET).hexdigest()
-
-def main():
+def sign():
     params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY}
-    params['sign'] = get_sign(params)
+    params['sign'] = getSign(params)
     r = requests.get('http://live.bilibili.com/mobile/getUser', params=params, headers=headers)
-    print(r.text)
+    _logger.debug(r.text)
     json = r.json()
-    if json['code'] == 0 and json['data']['isSign'] != 1:
-        sleep(1)
+    if json['code'] == 0:
+        if json['data']['isSign'] != 1:
+            sleep(1)
 
-        params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY, 'scale': 'xxhdpi'}
-        params['sign'] = get_sign(params)
-        r = requests.get('http://live.bilibili.com/AppUser/getSignInfo',
-                         params=params, headers=headers)
-        print(r.text)
+            params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY, 'scale': 'xxhdpi'}
+            params['sign'] = getSign(params)
+            r = requests.get('http://live.bilibili.com/AppUser/getSignInfo',
+                             params=params, headers=headers)
+            _logger.debug(r.text)
+            _logger.info("Sign OK!")
+        else:
+            _logger.info("Already signed!")
+    else:
+        _logger.error('getUser failed! Error message:' + json['message'])
 
 if __name__ == '__main__':
-    main()
+    from logger import getLogger
+    setLogger(getLogger())
+    sign()
