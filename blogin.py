@@ -15,6 +15,7 @@ BASE_URL = 'https://passport.bilibili.com/'
 _logger = None
 
 def setLogger(logger):
+    global _logger
     _logger = logger
 
 def getKey(s):
