@@ -25,8 +25,9 @@ def main():
         if res['code'] == 0:
             wait = res['data']['time_end'] - time() + 5
 
-            _logger.info('Waiting for %d seconds' % wait)
-            sleep(wait)
+            if wait > 0:
+                _logger.info('Waiting for %d seconds' % wait)
+                sleep(wait)
 
             r = requests.get('http://live.bilibili.com/mobile/freeSilverAward',
                              params=params, headers=headers)
