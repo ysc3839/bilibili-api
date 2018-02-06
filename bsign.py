@@ -6,7 +6,7 @@ from __future__ import print_function
 from time import sleep
 import requests
 
-from utils import ACCESS_KEY, APP_KEY, headers, getSign
+from utils import APP_KEY, headers, getSign
 
 _logger = None
 
@@ -14,7 +14,7 @@ def setLogger(logger):
     global _logger
     _logger = logger
 
-def sign():
+def sign(ACCESS_KEY):
     params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY}
     params['sign'] = getSign(params)
     r = requests.get('http://live.bilibili.com/mobile/getUser', params=params, headers=headers)
@@ -33,9 +33,11 @@ def sign():
         else:
             _logger.info("Already signed!")
     else:
-        _logger.error('getUser failed! Error message:' + json['message'])
+        _logger.error(u'getUser failed! Error code: {} message:{}'.format(json['code'], json['message']))
+        if json['code'] == -101: # Not login
+            return 1 # Restart
 
 if __name__ == '__main__':
     from logger import getLogger
     setLogger(getLogger())
-    sign()
+    sign('ACCESS_KEY')

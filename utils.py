@@ -3,7 +3,7 @@
 from urllib import urlencode
 from hashlib import md5
 
-ACCESS_KEY = '' # Your access key.
+# ACCESS_KEY = '' # Your access key.
 
 USERNAME = ''
 PASSWORD = ''
@@ -26,3 +26,15 @@ def getSign(params):
     items = params.items()
     items.sort()
     return md5(urlencode(items) + APP_SECRET).hexdigest()
+
+def autoLogin(logger, key_path):
+    import blogin
+    blogin.setLogger(logger)
+    key = blogin.doLogin(USERNAME, PASSWORD)
+
+    if not key: exit()
+
+    with open(key_path, 'w') as f:
+        f.write(key)
+
+    return key

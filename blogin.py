@@ -38,10 +38,11 @@ def login(s, username, password, captcha=None):
     _logger.debug(r.text)
     return r.json()
 
-def rsaEncrypt(password, (_hash, key)):
-    key = RSA.importKey(key)
+def rsaEncrypt(password, key_tuple):
+    # key_tuple = (_hash, key)
+    key = RSA.importKey(key_tuple[1])
     cipher = PKCS1_v1_5.new(key)
-    return b64encode(cipher.encrypt(_hash + password))
+    return b64encode(cipher.encrypt(key_tuple[0] + password))
 
 def authInfo(s, access_token):
     params = {'access_token': access_token, 'appkey': APP_KEY}
@@ -74,9 +75,12 @@ def doLogin(username, password):
             # rjson = refreshToken(s, rjson['data']['access_token'], rjson['data']['refresh_token'])
             # logout(s, rjson['data']['access_token'])
             _logger.info('Access token:' + rjson['data']['access_token'])
+
             return rjson['data']['access_token']
         else:
             _logger.error('login failed! Error message:' + rjson['message'])
+
+    return None
 
 if __name__ == '__main__':
     from logger import getLogger
