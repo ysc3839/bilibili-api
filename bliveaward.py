@@ -17,10 +17,11 @@ def setLogger(logger):
 def main(ACCESS_KEY):
     errCount = 0
     for _ in range(32):
-        params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY, '_device': 'android', '_ulv': '10000', 'build': '434000', 'mobi_app': 'android', 'platform': 'android'}
+        params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY, 'actionKey': 'appkey', 'build': '5370000', 'channel': 'bilih5', 'device': 'android', 'mobi_app': 'android', 'platform': 'android'}
+        params['ts'] = str(int(time()))
         params['sign'] = getSign(params)
-        r = requests.get('http://api.live.bilibili.com/mobile/freeSilverCurrentTask',
-                         params=params, headers=headers)
+        r = requests.get('https://api.live.bilibili.com/mobile/freeSilverCurrentTask',
+                         params=params, headers=headers) # or 'https://api.live.bilibili.com/lottery/v1/SilverBox/getCurrentTask'
         _logger.debug(r.text)
         res = r.json()
         if res['code'] == 0:
@@ -32,9 +33,10 @@ def main(ACCESS_KEY):
 
             params['time_start'] = res['data']['time_start']
             params['time_end'] = res['data']['time_end']
-            del params['sign']
+            params.pop('sign')
+            params['ts'] = str(int(time()))
             params['sign'] = getSign(params)
-            r = requests.get('http://api.live.bilibili.com/mobile/freeSilverAward',
+            r = requests.get('https://api.live.bilibili.com/mobile/freeSilverAward',
                              params=params, headers=headers)
             _logger.debug(r.text)
             j = r.json()

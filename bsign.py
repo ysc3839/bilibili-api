@@ -17,7 +17,7 @@ def setLogger(logger):
 def sign(ACCESS_KEY):
     params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY}
     params['sign'] = getSign(params)
-    r = requests.get('http://live.bilibili.com/mobile/getUser', params=params, headers=headers)
+    r = requests.get('https://live.bilibili.com/mobile/getUser', params=params, headers=headers)
     _logger.debug(r.text)
     json = r.json()
     if json['code'] == 0:
@@ -26,7 +26,7 @@ def sign(ACCESS_KEY):
 
             params = {'access_key': ACCESS_KEY, 'appkey': APP_KEY, 'scale': 'xxhdpi'}
             params['sign'] = getSign(params)
-            r = requests.get('http://live.bilibili.com/AppUser/getSignInfo',
+            r = requests.get('https://live.bilibili.com/AppUser/getSignInfo',
                              params=params, headers=headers)
             _logger.debug(r.text)
             _logger.info("Sign OK!")

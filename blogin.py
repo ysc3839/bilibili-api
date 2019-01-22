@@ -39,10 +39,10 @@ def login(s, username, password, captcha=None):
     return r.json()
 
 def rsaEncrypt(password, key_tuple):
-    # key_tuple = (_hash, key)
-    key = RSA.importKey(key_tuple[1])
+    _hash, key = key_tuple
+    key = RSA.importKey(key)
     cipher = PKCS1_v1_5.new(key)
-    return b64encode(cipher.encrypt(key_tuple[0] + password))
+    return b64encode(cipher.encrypt(_hash + password.encode()))
 
 def authInfo(s, access_token):
     params = {'access_token': access_token, 'appkey': APP_KEY}
