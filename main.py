@@ -16,8 +16,11 @@ bliveaward.setLogger(_logger)
 ACCESS_KEY = ''
 
 key_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ACCESS_KEY.txt')
-with open(key_path, 'r') as f:
-    ACCESS_KEY = f.read()
+try:
+    with open(key_path, 'r') as f:
+        ACCESS_KEY = f.read()
+except FileNotFoundError:
+    pass
 
 for _ in range(5):
     if bsign.sign(ACCESS_KEY) == 1 or bliveaward.main(ACCESS_KEY) == 1:
