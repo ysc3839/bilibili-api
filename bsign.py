@@ -34,7 +34,7 @@ def sign(ACCESS_KEY):
             _logger.info("Already signed!")
     else:
         _logger.error(u'getUser failed! Error code: {} message:{}'.format(json['code'], json['message']))
-        if json['code'] == -101: # Not login
+        if json['code'] == -101 or json['code'] == -500: # Not login
             return 1 # Restart
 
 if __name__ == '__main__':

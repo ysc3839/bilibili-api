@@ -49,7 +49,7 @@ def main(ACCESS_KEY):
             _logger.error('freeSilverCurrentTask returned error! Error message:' + res['message'])
             if res['code'] == -10017:
                 return
-            if res['code'] == -101:
+            if res['code'] == -101 or json['code'] == -500:  # Not login
                 return 1 # Restart
             sleep(5)
 
